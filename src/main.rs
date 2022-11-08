@@ -5,7 +5,7 @@ use egg_mode::direct::DraftMessage;
 use egg_mode::tweet::DraftTweet;
 use rss::{Channel, Item};
 use std::error::Error as OtherError;
-use std::{error::Error, time::{UNIX_EPOCH, SystemTime, Duration}};
+use std::{time::{UNIX_EPOCH, Duration}};
 
 const TYPE_RSS: &str = "RSS";
 const TYPE_ATOM: &str = "ATOM";
@@ -140,8 +140,14 @@ async fn post_tweets_atom(
         }
 
     for entry in entries {
-        let entry_timestamp = entry.updated().timestamp() as u64;
-
+        let entry_timestamp: u64;
+        if entry.published().is_none() {
+            // No publish date. Use Update Date
+            entry_timestamp = entry.updated().timestamp() as u64;
+        } else {
+            entry_timestamp = entry.published().unwrap().timestamp() as u64;
+        }
+        
         if entry_timestamp > timestamp {
             let _ = filter_and_send_tweets(
                 account.clone(),
