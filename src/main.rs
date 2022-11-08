@@ -130,7 +130,13 @@ async fn post_tweets_atom(
     entries: Vec<Entry>,
     feed: Feed,
 ) -> Result<(), Box<dyn OtherError>> {
-    let timestamp = account.timestamp_lambda.clone();
+    let entry_timestamp: u64;
+        if entry.published().is_err() {
+            // No publish date. Use Update Date
+            entry_timestamp = entry.updated().timestamp() as u64;
+        } else {
+            entry_timestamp = entry.published().unwrap().timestamp() as u64;
+        }
 
     for entry in entries {
         let entry_timestamp = entry.updated().timestamp() as u64;
