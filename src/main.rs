@@ -181,7 +181,11 @@ async fn send_error_twitter_dm(
     feed: Feed,
     error: Box<dyn OtherError>,
 ) -> Result<(), Box<dyn OtherError>> {
-    let text = "Error Feed: ".to_string() + &feed.name + " for timestamp: " + &account.timestamp_lambda.to_string()[..] + "\n" + &error.to_string();
+    
+    let d = UNIX_EPOCH + Duration::from_secs(account.timestamp_lambda);
+    let datetime = DateTime::<Utc>::from(d).format("%Y-%m-%d %H:%M:%S").to_string() + " UTC";
+    let text = "Feed: ".to_string() + &feed.name + " at " + &datetime + "\n" + &error.to_string();
+    
     eprintln!("{}", &text);
     if ALLOW_ERROR_DM {
         let message = DraftMessage::new(text, MY_TWITTER_ID);
