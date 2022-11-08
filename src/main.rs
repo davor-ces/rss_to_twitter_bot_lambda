@@ -1,10 +1,11 @@
 use aws_lambda_events::event::cloudwatch_events::CloudWatchEvent;use lambda_runtime::{run, service_fn, Error, LambdaEvent};
 use atom_syndication::{Entry, Feed as AtomFeed};
-use chrono::{DateTime};
+use chrono::{DateTime, Utc};
 use egg_mode::direct::DraftMessage;
 use egg_mode::tweet::DraftTweet;
 use rss::{Channel, Item};
 use std::error::Error as OtherError;
+use std::{error::Error, time::{UNIX_EPOCH, SystemTime, Duration}};
 
 const TYPE_RSS: &str = "RSS";
 const TYPE_ATOM: &str = "ATOM";
