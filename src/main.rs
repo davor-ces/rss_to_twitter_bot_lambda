@@ -131,7 +131,7 @@ async fn post_tweets_atom(
     feed: Feed,
 ) -> Result<(), Box<dyn OtherError>> {
     let entry_timestamp: u64;
-        if entry.published().is_err() {
+        if entry.published().is_none() {
             // No publish date. Use Update Date
             entry_timestamp = entry.updated().timestamp() as u64;
         } else {
